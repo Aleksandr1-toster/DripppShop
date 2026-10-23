@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DrippShop — магазин вещей</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f4ff;--card:#fff;--tx:#1b1535;--mut:#6d6890;--ac:#7c3aed;--ac2:#ec4899;--bd:#e5e0fa}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#0f0c1f;--card:#1a1533;--tx:#f1eeff;--mut:#9d97c4;--bd:#2c2554}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+button{font:inherit;cursor:pointer;border:0;color:inherit}
+input{font:inherit;color:var(--tx)}
+.grad{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff}
+.btn{padding:11px 18px;border-radius:12px;font-weight:600;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px #7c3aed55}
+.btn:active{transform:scale(.97)}
+.inp{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);margin-bottom:10px;outline:0}
+.inp:focus{border-color:var(--ac)}
+#auth{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px;background:linear-gradient(120deg,#7c3aed,#ec4899,#3b82f6,#7c3aed);background-size:300% 300%;animation:bg 12s ease infinite}
+@keyframes bg{50%{background-position:100% 50%}}
+.box{background:var(--card);border-radius:24px;padding:30px;width:100%;max-width:380px;animation:pop .6s cubic-bezier(.2,1.2,.4,1)}
+@keyframes pop{from{opacity:0;transform:translateY(30px) scale(.9)}}
+.box h1{margin:0 0 4px;font-size:30px;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.box p{color:var(--mut);margin:0 0 18px}
+.link{background:none;color:var(--ac);margin-top:10px;width:100%;font-size:14px}
+.err{color:#ef4444;font-size:13px;min-height:18px;margin-bottom:6px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--card);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;padding:12px 16px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:30}
+.logo{font-weight:800;font-size:22px;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.search{flex:1;min-width:0;padding:10px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);outline:0}
+.search:focus{border-color:var(--ac);box-shadow:0 0 0 3px #7c3aed33}
+.burger{background:none;width:40px;height:40px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:8px;position:relative}
+.burger i{display:block;height:3px;border-radius:2px;background:var(--tx);transition:.3s}
+.burger.on i:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.burger.on i:nth-child(2){opacity:0}
+.burger.on i:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+.dot{position:absolute;top:2px;right:0;background:var(--ac2);color:#fff;border-radius:10px;font-size:11px;padding:1px 5px;font-style:normal}
+#menu{position:fixed;top:0;right:0;bottom:0;width:min(320px,86vw);background:var(--card);z-index:40;transform:translateX(105%);transition:transform .4s cubic-bezier(.2,.9,.3,1);padding:calc(env(safe-area-inset-top,0px) + 70px) 18px 20px;box-shadow:-10px 0 40px #0004}
+#menu.on{transform:none}
+#menu button,#menu a{display:flex;gap:12px;width:100%;padding:15px;margin-bottom:8px;border-radius:14px;background:var(--bg);font-weight:600;text-decoration:none;color:var(--tx);opacity:0;transform:translateX(30px);transition:background .2s}
+#menu.on button,#menu.on a{opacity:1;transform:none;transition:opacity .4s calc(var(--i)*70ms + .15s),transform .4s calc(var(--i)*70ms + .15s),background .2s}
+#menu button:hover,#menu a:hover{background:var(--bd)}
+.veil{position:fixed;inset:0;background:#0008;z-index:35;opacity:0;pointer-events:none;transition:opacity .3s}
+.veil.on{opacity:1;pointer-events:auto}
+main{max-width:1100px;margin:0 auto;padding:18px 14px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.pc{background:var(--card);border-radius:18px;overflow:hidden;border:1px solid var(--bd);animation:up .6s both;transition:transform .3s,box-shadow .3s}
+.pc:hover{transform:translateY(-6px);box-shadow:0 14px 30px #7c3aed33}
+@keyframes up{from{opacity:0;transform:translateY(30px)}}
+.pi{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;overflow:hidden;background:linear-gradient(135deg,#a78bfa,#f9a8d4)}
+.pi img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.pc:hover .pi img{transform:scale(1.12)}
+.pb{padding:12px}
+.pn{font-weight:600;font-size:14px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pp{font-weight:800;font-size:18px;margin-bottom:10px}
+.pb .btn{width:100%;padding:9px;font-size:14px}
+.del{position:absolute;top:8px;right:8px;background:#000a;color:#fff;border-radius:50%;width:28px;height:28px}
+.empty{text-align:center;color:var(--mut);padding:60px 0}
+#sent{height:40px;text-align:center;color:var(--mut)}
+.modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:16px;background:#0009}
+.modal.on{display:flex}
+.sheet{background:var(--card);border-radius:22px;padding:24px;width:100%;max-width:440px;max-height:85vh;overflow:auto;animation:pop .4s cubic-bezier(.2,1.2,.4,1)}
+.sheet h2{margin:0 0 14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.row small{color:var(--mut)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{padding:8px 14px;border-radius:20px;background:var(--bg);border:1px solid var(--bd)}
+.chip.sel{background:var(--ac);color:#fff}
+.x{float:right;background:none;font-size:22px;color:var(--mut)}
+.bal{font-size:38px;font-weight:800;margin:6px 0 14px}
+.mini{background:none;color:var(--ac2);font-size:13px}
+.note{color:var(--mut);font-size:13px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,120px);background:var(--tx);color:var(--bg);padding:12px 20px;border-radius:14px;z-index:90;transition:transform .4s;max-width:90vw}
+#toast.on{transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<div id="auth">
+ <div class="box">
+  <h1>DrippShop</h1>
+  <p id="at">Создайте аккаунт, чтобы начать покупки</p>
+  <input class="inp" id="em" type="email" placeholder="Электронная почта" autocomplete="email">
+  <input class="inp" id="pw" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password">
+  <div class="err" id="er"></div>
+  <button class="btn grad" style="width:100%" id="ab">Зарегистрироваться</button>
+  <button class="link" id="as">Уже есть аккаунт? Войти</button>
+ </div>
+</div>
+
+<div id="app" hidden>
+ <header>
+  <span class="logo">DrippShop</span>
+  <input class="search" id="q" placeholder="Поиск по названию…">
+  <button class="burger" id="bg" aria-label="Каталог"><i></i><i></i><i></i><em class="dot" id="cc" hidden>0</em></button>
+ </header>
+ <main><div class="grid" id="grid"></div><div id="sent"></div></main>
+</div>
+
+<div class="veil" id="vl"></div>
+<nav id="menu">
+ <button style="--i:0" data-v="profile">👤 Профиль</button>
+ <button style="--i:1" data-v="cart">🛒 Корзина</button>
+ <button style="--i:2" data-v="balance">💰 Баланс</button>
+ <a style="--i:3" href="https://t.me/gunnar_87" target="_blank" rel="noopener">✈️ Написать админу</a>
+ <button style="--i:4" data-v="add" id="addb" hidden>➕ Добавить товар</button>
+</nav>
+<div class="modal" id="md"><div class="sheet" id="sh"></div></div>
+<div id="toast"></div>
+
+<script>
+var $=function(s){return document.querySelector(s)};
+var me=null,reg=true,offset=0,more=true,busy=false,query="",cart=[],pm={};
+try{cart=JSON.parse(localStorage.getItem("cart")||"[]")}catch(e){}
+function sc(){try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}$("#cc").hidden=!cart.length;$("#cc").textContent=cart.length}
+function rub(n){return n.toLocaleString("ru-RU")+" ₽"}
+function toast(t){var e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove("on")},3000)}
+function api(u,m,b){return fetch(u,{method:m||"GET",headers:{"Content-Type":"application/json"},body:b?JSON.stringify(b):undefined}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){if(!r.ok){var e=new Error(j.error||"Ошибка");e.status=r.status;throw e}return j})})}
+function isAdmin(){return me&&me.role==="admin"}
+
+/* вход / регистрация */
+$("#as").onclick=function(){reg=!reg;$("#ab").textContent=reg?"Зарегистрироваться":"Войти";$("#as").textContent=reg?"Уже есть аккаунт? Войти":"Нет аккаунта? Регистрация";$("#at").textContent=reg?"Создайте аккаунт, чтобы начать покупки":"С возвращением!";$("#er").textContent=""};
+$("#ab").onclick=function(){
+ var b={email:$("#em").value,password:$("#pw").value};$("#er").textContent="";
+ api(reg?"/api/register":"/api/login","POST",b).then(function(){
+  if(reg){$("#at").textContent="Письмо отправлено! Перейдите по ссылке в нём, затем войдите.";$("#as").click();$("#at").textContent="Письмо отправлено! Подтвердите почту и войдите."}
+  else init()
+ }).catch(function(e){$("#er").textContent=e.message})};
+
+/* старт */
+function init(){
+ api("/api/me").then(function(u){
+  me=u;$("#auth").style.display="none";$("#app").hidden=false;$("#addb").hidden=!isAdmin();sc();reset()
+ }).catch(function(){$("#auth").style.display="flex"})}
+var sp=new URLSearchParams(location.search);
+if(sp.get("verified")==="1")setTimeout(function(){toast("Почта подтверждена — теперь войдите ✓")},400);
+if(sp.get("verified")==="0")setTimeout(function(){toast("Ссылка недействительна или уже использована")},400);
+if(sp.get("paid"))setTimeout(function(){toast("Платёж обрабатывается — баланс обновится через несколько секунд")},400);
+if(sp.toString())history.replaceState(null,"",location.pathname);
+
+/* лента */
+function card(p,i){
+ pm[p.id]=p;var d=document.createElement("div");d.className="pc";d.style.animationDelay=(i%12)*60+"ms";
+ d.innerHTML='<div class="pi">'+(p.img?'<img alt="" loading="lazy">':'🛍️')+(isAdmin()?'<button class="del" data-d="'+p.id+'">×</button>':'')+'</div><div class="pb"><div class="pn"></div><div class="pp">'+rub(p.price)+'</div><button class="btn grad" data-b="'+p.id+'">В корзину</button></div>';
+ if(p.img)d.querySelector("img").src=p.img;
+ d.querySelector(".pn").textContent=p.name;return d}
+function load(){
+ if(busy||!more)return;busy=true;
+ api("/api/products?offset="+offset+"&q="+encodeURIComponent(query)).then(function(r){
+  r.items.forEach(function(p,i){$("#grid").appendChild(card(p,i))});
+  offset+=r.items.length;more=r.more;busy=false;
+  if(!offset)$("#sent").innerHTML='<div class="empty">'+(query?"Ничего не найдено 🔍":"Товаров пока нет — скоро появятся ✨")+'</div>';
+  obs.unobserve($("#sent"));if(more)obs.observe($("#sent"))
+ }).catch(function(e){busy=false;if(e.status===401)location.reload()})}
+function reset(){offset=0;more=true;busy=false;$("#grid").innerHTML="";$("#sent").innerHTML="";load()}
+var obs=new IntersectionObserver(function(e){if(e[0].isIntersecting)load()},{rootMargin:"500px"});
+var qt;$("#q").oninput=function(){clearTimeout(qt);qt=setTimeout(function(){query=$("#q").value.trim();reset()},300)};
+$("#grid").onclick=function(e){
+ var b=e.target.closest("[data-b]"),d=e.target.closest("[data-d]");
+ if(b){var p=pm[b.dataset.b];cart.push({id:p.id,name:p.name,price:p.price});sc();toast("Добавлено в корзину ✓")}
+ if(d&&confirm("Удалить товар?"))api("/api/products/"+d.dataset.d,"DELETE").then(reset).catch(function(e){toast(e.message)})};
+
+/* меню */
+function menu(on){$("#menu").classList.toggle("on",on);$("#vl").classList.toggle("on",on);$("#bg").classList.toggle("on",on)}
+$("#bg").onclick=function(){menu(!$("#menu").classList.contains("on"))};
+$("#vl").onclick=function(){menu(false)};
+$("#menu").onclick=function(e){var b=e.target.closest("[data-v]");if(b){menu(false);view(b.dataset.v)}};
+$("#md").onclick=function(e){if(e.target.id==="md"||e.target.closest(".x"))$("#md").classList.remove("on")};
+
+function refresh(v){api("/api/me").then(function(u){me=u;view(v)})}
+function view(v){
+ var s=$("#sh"),h='<button class="x">×</button>';
+ if(v==="profile"){
+  h+='<h2>👤 Профиль</h2><div class="row"><span>Почта</span><b id="pe"></b></div><div class="row"><span>Роль</span><b>'+(isAdmin()?"Администратор":"Покупатель")+'</b></div><div class="row"><span>Баланс</span><b>'+rub(me.balance)+'</b></div><h3>Заказы</h3><div id="ol"></div><button class="btn grad" style="width:100%;margin-top:14px" id="lo">Выйти</button>';
+  s.innerHTML=h;$("#pe").textContent=me.email;
+  if(!me.orders.length)$("#ol").innerHTML='<p class="note">Пока пусто</p>';
+  me.orders.forEach(function(o){var r=document.createElement("div");r.className="row";r.innerHTML="<span></span><b>"+rub(o.sum)+"</b>";r.firstChild.innerHTML=new Date(o.created).toLocaleDateString("ru-RU")+"<br><small></small>";r.querySelector("small").textContent=o.items;$("#ol").appendChild(r)});
+  $("#lo").onclick=function(){api("/api/logout","POST").then(function(){location.reload()})}}
+ if(v==="cart"){
+  var sum=0;h+='<h2>🛒 Корзина</h2>';
+  if(!cart.length)h+='<p class="note">Корзина пуста</p>';
+  cart.forEach(function(p,i){sum+=p.price;h+='<div class="row"><span class="nm" data-i="'+i+'"></span><span><b>'+rub(p.price)+'</b> <button class="mini" data-r="'+i+'">убрать</button></span></div>'});
+  if(sum)h+='<div class="row"><b>Итого</b><b>'+rub(sum)+'</b></div><p class="note">Оплата с баланса. Сейчас на балансе: '+rub(me.balance)+'</p><button class="btn grad" style="width:100%" id="pay">Оплатить</button>';
+  s.innerHTML=h;
+  s.querySelectorAll(".nm").forEach(function(n){n.textContent=cart[+n.dataset.i].name});
+  s.querySelectorAll("[data-r]").forEach(function(b){b.onclick=function(){cart.splice(+b.dataset.r,1);sc();view("cart")}});
+  if(sum)$("#pay").onclick=function(){
+   if(me.balance<sum){toast("Не хватает средств — пополните баланс");view("balance");return}
+   api("/api/checkout","POST",{ids:cart.map(function(p){return p.id})}).then(function(){cart=[];sc();toast("Оплачено! Спасибо за заказ 🎉");refresh("profile")}).catch(function(e){toast(e.message)})}}
+ if(v==="balance"){
+  var a=500;
+  s.innerHTML=h+'<h2>💰 Баланс</h2><div class="bal">'+rub(me.balance)+'</div><div class="chips">'+[500,1000,3000,5000].map(function(n){return '<button class="chip'+(n===500?" sel":"")+'" data-a="'+n+'">+'+n+' ₽</button>'}).join("")+'</div><button class="btn grad" style="width:100%" id="tp">Пополнить через ЮKassa</button><p class="note">Откроется защищённая страница оплаты ЮKassa (карта, СБП и др.).</p>';
+  s.querySelectorAll("[data-a]").forEach(function(c){c.onclick=function(){a=+c.dataset.a;s.querySelectorAll(".chip").forEach(function(x){x.classList.remove("sel")});c.classList.add("sel")}});
+  $("#tp").onclick=function(){api("/api/topup","POST",{amount:a}).then(function(r){location.href=r.url}).catch(function(e){toast(e.message)})}}
+ if(v==="add"&&isAdmin()){
+  s.innerHTML=h+'<h2>➕ Новый товар</h2><input class="inp" id="nn" placeholder="Название"><input class="inp" id="np" type="number" min="1" placeholder="Цена, ₽"><input class="inp" id="nf" type="file" accept="image/*"><button class="btn grad" style="width:100%" id="ns">Опубликовать</button>';
+  $("#ns").onclick=function(){
+   var n=$("#nn").value.trim(),p=+$("#np").value,f=$("#nf").files[0];
+   if(!n||!p){toast("Укажите название и цену");return}
+   function fin(img){api("/api/products","POST",{name:n,price:p,image:img}).then(function(){$("#md").classList.remove("on");reset();toast("Товар добавлен ✓")}).catch(function(e){toast(e.message)})}
+   if(!f)return fin("");
+   var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),k=Math.min(1,700/Math.max(im.width,im.height));c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);fin(c.toDataURL("image/jpeg",.82))};im.src=r.result};r.readAsDataURL(f)}}
+ $("#md").classList.add("on")}
+
+init();
+</script>
+</body>
+</html>
